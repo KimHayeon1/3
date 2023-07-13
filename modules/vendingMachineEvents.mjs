@@ -120,7 +120,28 @@ const initializeItems = () => {
   items = document.querySelectorAll('.cola-list button');
 };
 
+const getCartTotal = () => {
+  const cartItems = cart.children;
+  let totalPrice = 0;
+  [...cartItems].forEach(item => {
+    // 1이상의 숫자가 아닌 경우가 존재하면 예외처리
+    const quantity = parseInt(item.querySelector('strong').textContent)
+    totalPrice += item.dataset.cost * quantity
+  })
+  return totalPrice
+}
+
+const updateTotalPrice = () => {
+  const totalPriceVal = parseInt(totalPrice.textContent.replace(/[^\d]/g, ''));
+  const cartTotal = getCartTotal()
+  totalPrice.textContent = `총금액 : ${totalPriceVal + cartTotal} 원`;
+}
+
 const handleBtnGet = () => {
+  // 총금액 변경
+  updateTotalPrice();
+
+
   const cartItems = cart.children;
   [...cartItems].forEach((v) => {
     const getItemsName = [...getList.children].map((v) => v.dataset.name);
@@ -139,10 +160,6 @@ const handleBtnGet = () => {
     cart.innerHTML = '';
   });
 
-  // 총금액 변경
-  const totalPriceVal = parseInt(totalPrice.textContent.replace(/[^\d]/g, ''));
-  console.log(totalPrice.textContent.replace(/[^\d]/g, ''));
-  totalPrice.textContent = `총금액 : 9,000 원`;
 };
 
 const handleBtnGetChange = (e) => {
