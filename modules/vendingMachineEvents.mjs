@@ -5,6 +5,9 @@ const btnGet = document.querySelector('.btn-get');
 const myMoney = document.querySelector('.section2 .bg-box strong');
 const getList = document.querySelector('.section3 .get-list');
 const totalPrice = document.querySelector('.total-price');
+const inpDeposit = document.querySelector('#input-money');
+const btnDeposit = document.querySelector('#input-money + button');
+const balance = document.querySelector('.section1 .bg-box p');
 
 const plusCount = (target) => {
   // 변경
@@ -171,6 +174,12 @@ const handleBtnGetChange = (e) => {
   myMoney.textContent = myMoneyVal + balance;
 };
 
+const handleBtnDeposit = () => {
+  const balanceVal = parseInt(balance.textContent.replace(',', ''))
+  const depositVal = parseInt(inpDeposit.value)
+  balance.textContent = balanceVal + depositVal
+}
+
 const bindEvent = () => {
   initializeItems();
   items.forEach((el) => {
@@ -178,6 +187,7 @@ const bindEvent = () => {
   });
   btnGet.addEventListener('click', handleBtnGet);
   btnGetChange.addEventListener('click', handleBtnGetChange);
+  btnDeposit.addEventListener('click', handleBtnDeposit)
 };
 
 export default bindEvent;
