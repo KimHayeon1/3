@@ -96,6 +96,16 @@ const handleCart = (e) => {
   const data = target.dataset;
   const cartItems = cart.children;
 
+  // 잔액/상품총액 비교
+  const cartTotal = getCartTotal()
+  const itemCost = parseInt(data.cost);
+  const total = cartTotal + itemCost
+  const balanceVal = parseInt(balance.textContent.replace(/[^\d/]/g, ''));
+  if(balanceVal < total) {
+    alert(`잔액이 ${total-balanceVal}원 부족합니다`)
+    return
+  }
+
   let targetCartEl;
   for (const item of cartItems) {
     if (item.dataset.name === data.name) {
@@ -144,7 +154,6 @@ const handleBtnGet = () => {
   // 총금액 변경
   updateTotalPrice();
 
-
   const cartItems = cart.children;
   [...cartItems].forEach((v) => {
     const getItemsName = [...getList.children].map((v) => v.dataset.name);
@@ -168,10 +177,9 @@ const handleBtnGet = () => {
 const handleBtnGetChange = (e) => {
   const el = e.currentTarget.previousElementSibling.lastElementChild;
   const balance = parseInt(el.textContent.replace(/[원,]/g, ''));
-  console.log(myMoney);
   const myMoneyVal = parseInt(myMoney.textContent.replace(/[원,]/g, ''));
   el.textContent = '0원';
-  myMoney.textContent = myMoneyVal + balance;
+  myMoney.textContent = `${myMoneyVal + balance} 원`;
 };
 
 const handleBtnDeposit = () => {
