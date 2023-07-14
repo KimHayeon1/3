@@ -174,26 +174,6 @@ section {
 .bg-box .title::after {
   content: ' :';
 }
-.get-list.cart {
-  position: relative;
-  overflow: hidden;
-}
-.get-list.cart li {
-  transition: 1s;
-  position: absolute;
-  background: none;
-  border-radius: none;
-  padding: 0;
-  top: 0%;
-  width: 36px;
-  display: block;
-}
-.get-list.cart li:first-child ~ li {
-  margin: 0;
-}
-.get-list.cart li img {
-  width: 100%;
-}
 
 /* section2 */
 .section2 {

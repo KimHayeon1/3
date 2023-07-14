@@ -20,40 +20,6 @@ const plusCount = (target) => {
   target.dataset.count = parseInt(count) + 1;
 };
 
-const removeSoldOut = (target) => {
-  if (target.disabled) {
-    target.disabled = false;
-    target.removeChild(target.lastElementChild);
-  }
-};
-
-const handleCartItem = (e) => {
-  const target = e.currentTarget;
-  const beforeQuantity = target.querySelector('strong').firstChild.textContent;
-  // 수량이 2이상이면, 수량 빼기
-  if (beforeQuantity > 1) {
-    const quantity = parseInt(beforeQuantity) - 1;
-    target.querySelector('strong').firstChild.textContent = quantity;
-    // 수량이 1이면, 요소 제거
-  } else {
-    cart.removeChild(target);
-  }
-
-  // 진열대에서 해당 상품 찾기
-  let colaListItem;
-  for (const item of items) {
-    if (item.dataset.name === target.dataset.name) {
-      colaListItem = item;
-      break;
-    }
-  }
-
-  // 재고 변경
-  plusCount(colaListItem);
-  // 품절 표시 제거
-  removeSoldOut(colaListItem);
-};
-
 const cartItemGenerator = (data) => {
   const li = document.createElement('li');
   li.dataset.name = data.name;
@@ -62,15 +28,17 @@ const cartItemGenerator = (data) => {
   li.innerHTML = `
               <img src="./img/${data.img}" alt="${data.name}" />
     `;
+
+  const leftVal = Math.floor(Math.random() * 100);
+  const rotate = Math.floor(Math.random() * 360) - 180;
+  li.style.transform = `translate(-${leftVal}%, calc(-100% - 100px))`;
+  li.style.left = `${leftVal}%`;
+
   cart.appendChild(li);
-};
-
-const plusQuantity = (targetCartEl) => {
-  const beforeQuantity =
-    targetCartEl.querySelector('strong').firstChild.textContent;
-  const quantity = parseInt(beforeQuantity) + 1;
-
-  targetCartEl.querySelector('strong').firstChild.textContent = quantity;
+  setTimeout(() => {
+    const topVal = Math.floor(Math.random() * 100);
+    li.style.transform = `translate(-${leftVal}%, ${topVal}%) rotate(${rotate}deg)`;
+  });
 };
 
 const renderSoldOut = (target) => {
