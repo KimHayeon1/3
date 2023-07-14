@@ -58,16 +58,11 @@ const cartItemGenerator = (data) => {
   const li = document.createElement('li');
   li.dataset.name = data.name;
   li.dataset.cost = data.cost;
+  li.dataset.img = data.img;
   li.innerHTML = `
-              <img src="./img/${data.img}" alt="" />
-              ${data.name}
-              <strong
-                >1<span class="a11y-hidden">개</span>
-              </strong>
+              <img src="./img/${data.img}" alt="${data.name}" />
     `;
   cart.appendChild(li);
-
-  li.addEventListener('click', (e) => handleCartItem(e));
 };
 
 const plusQuantity = (targetCartEl) => {
@@ -96,38 +91,31 @@ const minusCount = (target) => {
   target.dataset.count = parseInt(count) - 1;
 };
 
+const getCartTotal = () => {
+  const cartItems = cart.children;
+  let totalPrice = 0;
+  [...cartItems].forEach((item) => {
+    totalPrice += parseInt(item.dataset.cost);
+  });
+  return totalPrice;
+};
+
 const handleCart = (e) => {
   const target = e.currentTarget;
   const data = target.dataset;
-  const cartItems = cart.children;
 
   // 잔액/상품총액 비교
   const cartTotal = getCartTotal();
   const itemCost = parseInt(data.cost);
+  console.log(cartTotal);
   const total = cartTotal + itemCost;
   const balanceVal = parseInt(balance.textContent.replace(/[^\d/]/g, ''));
   if (balanceVal < total) {
     alert(`잔액이 ${total - balanceVal}원 부족합니다`);
     return;
   }
-
-  let targetCartEl;
-  for (const item of cartItems) {
-    if (item.dataset.name === data.name) {
-      targetCartEl = item;
-      break;
-    }
-  }
-
-  // 장바구니에 있다면 수량 추가
-  if (targetCartEl) {
-    // 수량 변경
-    plusQuantity(targetCartEl);
-  } else {
-    // 없다면 요소 생성
-    cartItemGenerator(data);
-  }
-
+  // 카트에 상품 생성
+  cartItemGenerator(data);
   // 재고 변경
   minusCount(e.currentTarget);
   // 품절 확인 후 표시
@@ -137,17 +125,6 @@ const handleCart = (e) => {
 const initializeItems = () => {
   items = document.querySelectorAll('.cola-list button');
 };
-
-const getCartTotal = () => {
-  const cartItems = cart.children;
-  let totalPrice = 0;
-  [...cartItems].forEach((item) => {
-    const quantity = parseInt(item.querySelector('strong').textContent);
-    totalPrice += item.dataset.cost * quantity;
-  });
-  return totalPrice;
-};
-
 const updateTotalPrice = (cartTotal) => {
   const totalPriceVal = parseInt(totalPrice.textContent.replace(/[^\d]/g, ''));
   const total = formatNum(totalPriceVal + cartTotal);
@@ -157,6 +134,19 @@ const updateTotalPrice = (cartTotal) => {
 // 잔액 업데이트
 const updateBalance = (balanceVal) => {
   balance.textContent = `${balanceVal}원`;
+};
+
+const renderGetItem = (data) => {
+  const li = document.createElement('li');
+  li.dataset.name = data.name;
+  li.innerHTML = `
+              <img src="./img/${data.img}" alt="" />
+              ${data.name}
+              <strong
+                >1<span class="a11y-hidden">개</span>
+              </strong>
+    `;
+  getList.appendChild(li);
 };
 
 const handleBtnGet = () => {
@@ -172,18 +162,16 @@ const handleBtnGet = () => {
   // 획득한 음료 리스트 렌더링
   const cartItems = cart.children;
   [...cartItems].forEach((v) => {
+    const data = v.dataset;
     const getItemsName = [...getList.children].map((v) => v.dataset.name);
     // 획득한 음료에 같은 상품이 있다면
-    if (getItemsName.includes(v.dataset.name)) {
+    if (getItemsName.includes(data.name)) {
       const target = getList.querySelector(`[
-          data-name="${v.dataset.name}"] strong`);
-      target.textContent =
-        parseInt(v.querySelector('strong').textContent) +
-        parseInt(target.textContent);
+          data-name="${data.name}"] strong`);
+      target.textContent = parseInt(target.textContent) + 1;
     } else {
       //획득한 음료에 같은 상품이 없다면
-      const clone = v.cloneNode(true);
-      getList.appendChild(clone);
+      renderGetItem(data);
     }
   });
 

@@ -38,7 +38,7 @@ button:not(:disabled) {
 
 /* layout-------------------- */
 body {
-  font-family: "Noto Sans KR", sans-serif;
+  font-family: 'Noto Sans KR', sans-serif;
 }
 /* h1 */
 h1 {
@@ -65,8 +65,8 @@ section {
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 50px auto;
     grid-template-areas:
-      "section1 section2"
-      "section1 section3";
+      'section1 section2'
+      'section1 section3';
     gap: 20px 28px;
   }
 
@@ -172,7 +172,20 @@ section {
   font-weight: 500;
 }
 .bg-box .title::after {
-  content: " :";
+  content: ' :';
+}
+
+.get-list.cart li {
+  background: none;
+  border-radius: none;
+  padding: 0;
+  display: inline-block;
+}
+.get-list.cart li:first-child ~ li {
+  margin: 0;
+}
+.get-list.cart li img {
+  width: 18px;
 }
 
 /* section2 */
