@@ -9,6 +9,11 @@ const inpDeposit = document.querySelector('#input-money');
 const btnDeposit = document.querySelector('#input-money + button');
 const balance = document.querySelector('.section1 .bg-box p');
 
+// 숫자 형식 변경
+const formatNum = (num) => {
+  return new Intl.NumberFormat().format(num);
+};
+
 const plusCount = (target) => {
   // 변경
   const count = target.dataset.count;
@@ -73,7 +78,7 @@ const plusQuantity = (targetCartEl) => {
   targetCartEl.querySelector('strong').firstChild.textContent = quantity;
 };
 
-const drawSoldOut = (target) => {
+const renderSoldOut = (target) => {
   const count = parseInt(target.dataset.count);
   if (!count) {
     target.disabled = true;
@@ -97,13 +102,13 @@ const handleCart = (e) => {
   const cartItems = cart.children;
 
   // 잔액/상품총액 비교
-  const cartTotal = getCartTotal()
+  const cartTotal = getCartTotal();
   const itemCost = parseInt(data.cost);
-  const total = cartTotal + itemCost
+  const total = cartTotal + itemCost;
   const balanceVal = parseInt(balance.textContent.replace(/[^\d/]/g, ''));
-  if(balanceVal < total) {
-    alert(`잔액이 ${total-balanceVal}원 부족합니다`)
-    return
+  if (balanceVal < total) {
+    alert(`잔액이 ${total - balanceVal}원 부족합니다`);
+    return;
   }
 
   let targetCartEl;
@@ -126,7 +131,7 @@ const handleCart = (e) => {
   // 재고 변경
   minusCount(e.currentTarget);
   // 품절 확인 후 표시
-  drawSoldOut(e.currentTarget);
+  renderSoldOut(e.currentTarget);
 };
 
 const initializeItems = () => {
@@ -136,24 +141,35 @@ const initializeItems = () => {
 const getCartTotal = () => {
   const cartItems = cart.children;
   let totalPrice = 0;
-  [...cartItems].forEach(item => {
-    // 1이상의 숫자가 아닌 경우가 존재하면 예외처리
-    const quantity = parseInt(item.querySelector('strong').textContent)
-    totalPrice += item.dataset.cost * quantity
-  })
-  return totalPrice
-}
+  [...cartItems].forEach((item) => {
+    const quantity = parseInt(item.querySelector('strong').textContent);
+    totalPrice += item.dataset.cost * quantity;
+  });
+  return totalPrice;
+};
 
-const updateTotalPrice = () => {
+const updateTotalPrice = (cartTotal) => {
   const totalPriceVal = parseInt(totalPrice.textContent.replace(/[^\d]/g, ''));
-  const cartTotal = getCartTotal()
-  totalPrice.textContent = `총금액 : ${totalPriceVal + cartTotal} 원`;
-}
+  const total = formatNum(totalPriceVal + cartTotal);
+  totalPrice.textContent = `총금액 : ${total} 원`;
+};
+
+// 잔액 업데이트
+const updateBalance = (balanceVal) => {
+  balance.textContent = `${balanceVal}원`;
+};
 
 const handleBtnGet = () => {
-  // 총금액 변경
-  updateTotalPrice();
+  const cartTotal = getCartTotal();
+  // 총금액 업데이트
+  updateTotalPrice(cartTotal);
 
+  // 잔액 업데이트
+  const currBalanceVal = parseInt(balance.textContent.replace(/[^\d/]/g, ''));
+  const balanceVal = formatNum(currBalanceVal - cartTotal);
+  updateBalance(balanceVal);
+
+  // 획득한 음료 리스트 렌더링
   const cartItems = cart.children;
   [...cartItems].forEach((v) => {
     const getItemsName = [...getList.children].map((v) => v.dataset.name);
@@ -169,24 +185,45 @@ const handleBtnGet = () => {
       const clone = v.cloneNode(true);
       getList.appendChild(clone);
     }
-    cart.innerHTML = '';
   });
 
+  // 장바구니 비우기
+  cart.innerHTML = '';
 };
 
+// 소지금 업데이트
+const updateMyMoney = (myMoneyVal) => {
+  myMoney.textContent = `${myMoneyVal} 원`;
+};
+
+// 거스름돈 반환
 const handleBtnGetChange = (e) => {
   const el = e.currentTarget.previousElementSibling.lastElementChild;
-  const balance = parseInt(el.textContent.replace(/[원,]/g, ''));
-  const myMoneyVal = parseInt(myMoney.textContent.replace(/[원,]/g, ''));
+  const balance = parseInt(el.textContent.replace(/[^\d/]/g, ''));
   el.textContent = '0원';
-  myMoney.textContent = `${myMoneyVal + balance} 원`;
+
+  // 소지금 업데이트
+  const currMyMoneyVal = parseInt(myMoney.textContent.replace(/[^\d/]/g, ''));
+  const myMoneyVal = formatNum(balance + currMyMoneyVal);
+  updateMyMoney(myMoneyVal);
 };
 
 const handleBtnDeposit = () => {
-  const balanceVal = parseInt(balance.textContent.replace(',', ''))
-  const depositVal = parseInt(inpDeposit.value)
-  balance.textContent = balanceVal + depositVal
-}
+  const depositVal = parseInt(inpDeposit.value);
+
+  // 잔액 업데이트
+  const currBalanceVal = parseInt(balance.textContent.replace(/[^\d/]/g, ''));
+  const balanceVal = formatNum(currBalanceVal + depositVal);
+  updateBalance(balanceVal);
+
+  // 입금액 reset
+  inpDeposit.value = null;
+
+  // 소지금 업데이트
+  const currMyMoneyVal = parseInt(myMoney.textContent.replace(/[^\d/]/g, ''));
+  const myMoneyVal = formatNum(currMyMoneyVal - depositVal);
+  updateMyMoney(myMoneyVal);
+};
 
 const bindEvent = () => {
   initializeItems();
@@ -195,7 +232,7 @@ const bindEvent = () => {
   });
   btnGet.addEventListener('click', handleBtnGet);
   btnGetChange.addEventListener('click', handleBtnGetChange);
-  btnDeposit.addEventListener('click', handleBtnDeposit)
+  btnDeposit.addEventListener('click', handleBtnDeposit);
 };
 
 export default bindEvent;
