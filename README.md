@@ -1,3 +1,6 @@
+vendingMachineEvents copy.mjs/style copy.css는 기존 ui
+vendingMachineEvents.mjs/style.css는 변형 ui
+
 ## 기능
 
 ### 1. 상품 생성
