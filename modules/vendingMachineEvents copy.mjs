@@ -210,6 +210,19 @@ const handleBtnGetChange = (e) => {
 
 const handleBtnDeposit = () => {
   const depositVal = parseInt(inpDeposit.value);
+  const currMyMoneyVal = parseInt(myMoney.textContent.replace(/[^\d/]/g, ''));
+
+  // 숫자 외 입력값 예외처리
+  if (/[^\d]/g.test(depositVal)) {
+    alert('숫자만 입력 가능합니다.');
+    return;
+  }
+
+  // 입금액이 소지금보다 크면 얼리리턴
+  if (depositVal > currMyMoneyVal) {
+    alert(`소지금이 ${depositVal - currMyMoneyVal}원 부족합니다.`);
+    return;
+  }
 
   // 잔액 업데이트
   const currBalanceVal = parseInt(balance.textContent.replace(/[^\d/]/g, ''));
@@ -220,7 +233,6 @@ const handleBtnDeposit = () => {
   inpDeposit.value = null;
 
   // 소지금 업데이트
-  const currMyMoneyVal = parseInt(myMoney.textContent.replace(/[^\d/]/g, ''));
   const myMoneyVal = formatNum(currMyMoneyVal - depositVal);
   updateMyMoney(myMoneyVal);
 };
