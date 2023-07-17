@@ -14,6 +14,12 @@ const formatNum = (num) => {
   return new Intl.NumberFormat().format(num);
 };
 
+// 문자 -> 정수
+const changeInt = (str) => {
+  const intStr = str.replace(/[^\d/]/g, '');
+  return parseInt(intStr);
+};
+
 const cartItemGenerator = (data) => {
   const li = document.createElement('li');
   li.dataset.name = data.name;
@@ -71,7 +77,7 @@ const handleCart = (e) => {
   const itemCost = parseInt(data.cost);
   console.log(cartTotal);
   const total = cartTotal + itemCost;
-  const balanceVal = parseInt(balance.textContent.replace(/[^\d]/g, ''));
+  const balanceVal = changeInt(balance.textContent);
   if (balanceVal < total) {
     alert(`잔액이 ${total - balanceVal}원 부족합니다`);
     return;
@@ -88,7 +94,7 @@ const initializeItems = () => {
   items = document.querySelectorAll('.cola-list button');
 };
 const updateTotalPrice = (cartTotal) => {
-  const totalPriceVal = parseInt(totalPrice.textContent.replace(/[^\d]/g, ''));
+  const totalPriceVal = changeInt(totalPrice.textContent);
   const total = formatNum(totalPriceVal + cartTotal);
   totalPrice.textContent = `총금액 : ${total} 원`;
 };
@@ -117,7 +123,7 @@ const handleBtnGet = () => {
   updateTotalPrice(cartTotal);
 
   // 잔액 업데이트
-  const currBalanceVal = parseInt(balance.textContent.replace(/[^\d]/g, ''));
+  const currBalanceVal = changeInt(balance.textContent);
   const balanceVal = formatNum(currBalanceVal - cartTotal);
   updateBalance(balanceVal);
 
@@ -149,18 +155,18 @@ const updateMyMoney = (myMoneyVal) => {
 // 거스름돈 반환
 const handleBtnGetChange = (e) => {
   const el = e.currentTarget.previousElementSibling.lastElementChild;
-  const balance = parseInt(el.textContent.replace(/[^\d]/g, ''));
+  const balance = changeInt(el.textContent);
   el.textContent = '0원';
 
   // 소지금 업데이트
-  const currMyMoneyVal = parseInt(myMoney.textContent.replace(/[^\d]/g, ''));
+  const currMyMoneyVal = changeInt(myMoney.textContent);
   const myMoneyVal = formatNum(balance + currMyMoneyVal);
   updateMyMoney(myMoneyVal);
 };
 
 const handleBtnDeposit = () => {
   const depositVal = parseInt(inpDeposit.value);
-  const currMyMoneyVal = parseInt(myMoney.textContent.replace(/[^\d]/g, ''));
+  const currMyMoneyVal = changeInt(myMoney.textContent);
 
   // 숫자 외 입력값 예외처리
   if (/[^\d]/g.test(depositVal)) {
@@ -175,7 +181,7 @@ const handleBtnDeposit = () => {
   }
 
   // 잔액 업데이트
-  const currBalanceVal = parseInt(balance.textContent.replace(/[^\d]/g, ''));
+  const currBalanceVal = changeInt(balance.textContent);
   const balanceVal = formatNum(currBalanceVal + depositVal);
   updateBalance(balanceVal);
 
