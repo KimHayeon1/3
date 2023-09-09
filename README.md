@@ -1,6 +1,7 @@
 vendingMachineEvents copy.mjs/style copy.css는 기존 ui
 vendingMachineEvents.mjs/style.css는 변형 ui
 
+[실행 URL](https://kimhayeon1.github.io/vending-machine-study/)
 ## 기능
 
 ### 1. 상품 생성
